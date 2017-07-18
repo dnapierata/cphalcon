@@ -117,6 +117,22 @@ $di->set(
         return $connection;
     }
 );
+$di->set(
+    'dbTwo',
+    function () use ($di) {
+        $config = $di['config'];
+        $config  = $config->get('database')->toArray();
+        $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config['adapter'];
+
+        unset($config['adapter']);
+
+        /** @var \Phalcon\Db\AdapterInterface $connection */
+        $connection = new $adapter($config);
+        $connection->execute('SET NAMES UTF8', []);
+
+        return $connection;
+    }
+);
 
 $application = new Application();
 $application->setDI($di);
